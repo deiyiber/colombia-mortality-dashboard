@@ -153,19 +153,52 @@ def grafico_apiladas():
     #print(muertes_por_sexo.head(10))
     return muertes_por_sexo
  
-### Distribución de muertes, agrupando los valores de la variable GRUPO_EDAD1 según los rangos 
-# definidos en la tabla de referencia para identificar patrones de mortalidad a lo largo del ciclo de vida.
-
 def histograma():
-    """Devuelve la distribución de muertes agrupadas por grupo de edad."""
+    """Agrupa las muertes por categorías de edad según los códigos DANE y muestra su rango descriptivo."""
+    muerte_proc = muerte.copy()
+
+    # --- Diccionario con los rangos DANE y descripciones ---
+    rangos_edad = {
+        "Mortalidad neonatal": {"codigos": range(0, 5), "rango": "Menor de 1 mes"},
+        "Mortalidad infantil": {"codigos": range(5, 7), "rango": "1 a 11 meses"},
+        "Primera infancia": {"codigos": range(7, 9), "rango": "1 a 4 años"},
+        "Niñez": {"codigos": range(9, 11), "rango": "5 a 14 años"},
+        "Adolescencia": {"codigos": [11], "rango": "15 a 19 años"},
+        "Juventud": {"codigos": range(12, 14), "rango": "20 a 29 años"},
+        "Adultez temprana": {"codigos": range(14, 17), "rango": "30 a 44 años"},
+        "Adultez intermedia": {"codigos": range(17, 20), "rango": "45 a 59 años"},
+        "Vejez": {"codigos": range(20, 25), "rango": "60 a 84 años"},
+        "Longevidad / Centenarios": {"codigos": range(25, 29), "rango": "85 a 100+ años"},
+        "Edad desconocida": {"codigos": [29], "rango": "Sin información"}
+    }
+
+    # --- Función auxiliar para clasificar cada código ---
+    def clasificar_grupo(cod):
+        try:
+            codigo = int(cod)
+        except (ValueError, TypeError):
+            return "Edad desconocida"
+        for categoria, info in rangos_edad.items():
+            if codigo in info["codigos"]:
+                return categoria
+        return "Edad desconocida"
+
+    # --- Aplicar clasificación ---
+    muerte_proc["categoria_edad"] = muerte_proc["grupo_edad1"].apply(clasificar_grupo)
+
+    # --- Agrupar por categoría ---
     dist_edad = (
-        muerte_proc.groupby('grupo_edad1')
+        muerte_proc.groupby("categoria_edad")
         .size()
-        .reset_index(name='total_muertes')
-        .sort_values('grupo_edad1')
+        .reset_index(name="total_muertes")
+        .sort_values("total_muertes", ascending=False)
     )
-    #print("\n Distribución de muertes por grupo de edad:")
-    #print(dist_edad)
+
+    # --- Agregar el rango de edad descriptivo ---
+    dist_edad["rango_edad"] = dist_edad["categoria_edad"].map(lambda c: rangos_edad[c]["rango"])
+
+    #print("\n Distribución de muertes por categoría y rango de edad:")
+    #print(dist_edad[["categoria_edad", "rango_edad", "total_muertes"]])
     return dist_edad
 
 def grafico_lineal():

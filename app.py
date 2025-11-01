@@ -5,13 +5,13 @@ from dash import Dash, dcc, html, dash_table
 import os
 
 # --- Cargar datos ---
-df = pd.read_csv("info/mapa.csv", sep='|')
-lineal1 = pd.read_csv("info/lineal.csv", sep='|')
-df_ciudades = pd.read_csv("info/df_ciudades.csv", sep='|')
-circular = pd.read_csv("info/circular.csv", sep='|')
-apiladas = pd.read_csv("info/apiladas.csv", sep='|')
-histogra = pd.read_csv("info/histogra.csv", sep='|')
-tablita = pd.read_csv("info/tablita.csv", sep='|')
+df = pd.read_csv("info/mapa.csv", sep='|',encoding='latin1')
+lineal1 = pd.read_csv("info/lineal.csv", sep='|',encoding='latin1')
+df_ciudades = pd.read_csv("info/df_ciudades.csv", sep='|',encoding='latin1')
+circular = pd.read_csv("info/circular.csv", sep='|',encoding='latin1')
+apiladas = pd.read_csv("info/apiladas.csv", sep='|',encoding='latin1')
+histogra = pd.read_csv("info/histogra.csv", sep='|',encoding='latin1')
+tablita = pd.read_csv("info/tablita.csv", sep='|',encoding='latin1')
 
 # --- GeoJSON ---
 with open("departamentos_colombia.geojson", "r", encoding="utf-8") as f:
@@ -106,21 +106,40 @@ fig_apiladas.update_layout(
     plot_bgcolor="#ffffff"
 )
 
-# --- Histograma ---
+# --- Histograma AJUSTADO ---
+# Ordenar por la columna de categoría para mantener el orden lógico
+histogra_ordenado = histogra.sort_values('categoria_edad')
+
 fig_histograma = px.bar(
-    histogra.sort_values(by="grupo_edad1"),
-    x="grupo_edad1",
+    histogra_ordenado,
+    x="rango_edad",
     y="total_muertes",
     text="total_muertes",
     color="total_muertes",
     color_continuous_scale="Blues",
-    title="Distribución de muertes por grupo de edad"
+    title="Distribución de muertes por grupo de edad",
+    category_orders={"rango_edad": [
+        "60 a 84 años",
+        "85 a 100+ años", 
+        "45 a 59 años",
+        "30 a 44 años",
+        "20 a 29 años",
+        "Menor de 1 mes",
+        "15 a 19 años",
+        "1 a 11 meses",
+        "5 a 14 años",
+        "1 a 4 años",
+        "Sin información"
+    ]}
 )
 fig_histograma.update_traces(textposition="outside")
 fig_histograma.update_layout(
     title_x=0.5,
     paper_bgcolor="#e6f2ff",  # Fondo pastel azul
-    plot_bgcolor="#ffffff"
+    plot_bgcolor="#ffffff",
+    xaxis_title="Rango de Edad",
+    yaxis_title="Total de Muertes",
+    xaxis_tickangle=-45  # Rotar etiquetas para mejor legibilidad
 )
 
 # --- Tabla ---
@@ -156,13 +175,39 @@ tabla_dash = dash_table.DataTable(
 )
 
 # --- Textos descriptivos personalizables ---
-texto_mapa = "Mapa que muestra la distribución geográfica de las muertes por departamentos en Colombia. Los tonos más oscuros indican mayor cantidad de casos."
-texto_lineal = "Gráfico lineal que muestra la evolución temporal de las muertes a lo largo de los meses del año 2019."
-texto_barras = "Ranking de las ciudades con mayores índices de homicidios y violencia en Colombia durante 2019."
-texto_circular = "Distribución porcentual de las muertes en las ciudades con menores índices de mortalidad."
-texto_apiladas = "Desglose de muertes por departamento discriminado por sexo (masculino y femenino)."
-texto_histograma = "Distribución de las muertes por grupos de edad, mostrando qué segmentos poblacionales fueron más afectados."
-texto_tabla = "Tabla detallada con los códigos de mortalidad y su descripción correspondiente."
+texto_mapa = """Mapa coroplético que muestra la distribución geográfica de muertes por departamento en Colombia (2019). 
+
+CARACTERÍSTICAS:
+• Tonos oscuros = Mayor concentración de casos
+• Tonos claros = Menor concentración de casos
+
+DEPARTAMENTOS CON MAYOR MORTALIDAD:
+• Bogotá D.C.: más de 38,000 muertes
+• Antioquia: 34,473 muertes  
+• Valle del Cauca: 28,443 muertes
+
+Los departamentos con menor densidad poblacional (Vaupés, Guainía, Amazonas) registran las cifras más bajas."""
+
+texto_lineal = """El gráfico de líneas muestra la variación mensual en el número de muertes durante 2019. Se observan fluctuaciones a lo largo del año,
+ con ciertos picos que pueden asociarse a factores estacionales, climáticos o coyunturales. Este tipo de análisis permite detectar tendencias
+   temporales que podrían orientar acciones preventivas o de salud pública."""
+texto_barras = """Esta visualización presenta las cinco ciudades con mayor número de homicidios, considerando los códigos de causa X95 (agresión con
+ disparo de arma de fuego) y casos no especificados. El gráfico permite identificar los principales focos de violencia letal en el país, mostrando 
+ contrastes claros entre zonas urbanas y regiones intermedias, y resaltando la importancia de políticas de seguridad diferenciadas por territorio."""
+texto_circular = """El gráfico circular muestra las diez ciudades con menor número de muertes registradas durante 2019. Cada sector representa el
+ aporte porcentual de cada ciudad al total nacional. Esta visualización permite reconocer los municipios con mejores indicadores de mortalidad, 
+ que pueden servir como referencia para el diseño de estrategias de bienestar y prevención."""
+texto_apiladas = """En este gráfico se comparan las muertes de hombres y mujeres en cada departamento. La estructura apilada permite visualizar
+ simultáneamente la participación de ambos sexos y las diferencias relativas entre regiones. Se observa que, en la mayoría de los departamentos, 
+ los hombres presentan tasas de mortalidad superiores, en especial en zonas con alta incidencia de violencia o accidentes."""
+texto_histograma = """histograma agrupa las muertes según los rangos definidos en la variable GRUPO_EDAD1, permitiendo analizar la mortalidad a 
+lo largo del ciclo de vida. La visualización muestra una clara concentración en los grupos de edad avanzada, coherente con el perfil epidemiológico 
+nacional, aunque también se identifican picos en edades jóvenes asociados a causas externas o violentas."""
+
+texto_tabla = """Esta tabla resume las diez principales causas de muerte en el país durante 2019, mostrando su código,
+ el nombre de la causa y el número total de casos. El orden descendente facilita identificar los factores que más contribuyen
+   a la mortalidad general, entre los que suelen destacar enfermedades cardiovasculares, respiratorias y ciertos tipos de cáncer.
+     Este análisis es clave para priorizar políticas de salud pública."""
 
 # --- App ---
 app = Dash(__name__)
@@ -185,7 +230,7 @@ app.layout = html.Div(
                     style={"width": "70%", "display": "inline-block", "padding": "10px"}),
             html.Div([
                 html.H3("Descripción del Mapa", style={"color": "#0d47a1"}),
-                html.P(texto_mapa, style={"textAlign": "justify", "lineHeight": "1.6"})
+                html.P(texto_mapa, style={"whiteSpace": "pre-line", "textAlign": "justify", "lineHeight": "1.6"})
             ], style={"width": "25%", "display": "inline-block", "verticalAlign": "top", "padding": "20px"})
         ]),
         html.Hr(),
@@ -260,6 +305,7 @@ app.layout = html.Div(
         ], style={"marginTop": "30px", "marginBottom": "20px"})
     ]
 )
+
 
 
 #if __name__ == "__main__":

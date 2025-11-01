@@ -1,31 +1,12 @@
-grupo_edad1|total_muertes
-0|7365
-1|23615
-2|45457
-3|36650
-4|1824
-5|45391
-6|21077
-7|16019
-8|16896
-9|18614
-10|24212
-11|69259
-12|110690
-13|113343
-14|112529
-15|115625
-16|126508
-17|151881
-18|214593
-19|291626
-20|379908
-21|459686
-22|511736
-23|583179
-24|645050
-25|591012
-26|384718
-27|155291
-28|35223
-29|297
+categoria_edad|total_muertes|rango_edad
+Vejez|115453|60 a 84 años
+Longevidad / Centenarios|56061|85 a 100+ años
+Adultez intermedia|29105|45 a 59 años
+Adultez temprana|17276|30 a 44 años
+Juventud|11840|20 a 29 años
+Mortalidad neonatal|4520|Menor de 1 mes
+Adolescencia|3795|15 a 19 años
+Mortalidad infantil|2771|1 a 11 meses
+Niñez|1993|5 a 14 años
+Primera infancia|1518|1 a 4 años
+Edad desconocida|23|Sin información
