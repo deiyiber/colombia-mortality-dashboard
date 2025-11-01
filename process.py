@@ -12,9 +12,10 @@ def quitar_tildes(texto):
 def cargar_archivos():
     
 
-    muerte=pd.read_csv("C:/Users/acer/Desktop/Actividad4/info/NoFetal2019.csv",sep=';')
-    cod=pd.read_csv("C:/Users/acer/Desktop/Actividad4/info/CodigosDeMuerte.csv",sep=';')
-    pola=pd.read_csv("C:/Users/acer/Desktop/Actividad4/info/Divipola.csv",sep=';')
+    muerte = pd.read_csv("info/NoFetal2019.csv", sep=';')
+    cod = pd.read_csv("info/CodigosDeMuerte.csv", sep=';')
+    pola = pd.read_csv("info/Divipola.csv", sep=';')
+
 
     muerte.columns=muerte.columns.str.lower()
     cod.columns=cod.columns.str.lower()
