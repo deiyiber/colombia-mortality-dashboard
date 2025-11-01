@@ -156,6 +156,7 @@ tabla_dash = dash_table.DataTable(
 
 # --- App Dash ---
 app = Dash(__name__)
+server = app.server
 app.layout = html.Div([
     html.H2("Mapa de muertes por departamento - 2019", style={"textAlign": "center"}),
     # Mapa
