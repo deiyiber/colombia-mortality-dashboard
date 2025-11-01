@@ -1,5 +1,8 @@
 Análisis de Mortalidad en Colombia - 2019
 
+##  Autores:
+* Kiliam Alvarado
+* Deiyiber Ducuara
 ##  Introducción del proyecto
 
 Este proyecto desarrolla una aplicación web dinámica en Python con Dash y Plotly para analizar la mortalidad en Colombia durante el año 2019.
