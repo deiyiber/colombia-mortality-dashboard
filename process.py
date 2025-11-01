@@ -149,8 +149,8 @@ def grafico_apiladas():
         .reset_index(name='total_muertes')
     )
 
-    print("\n Total de muertes por sexo y departamento:")
-    print(muertes_por_sexo.head(10))
+    #print("\n Total de muertes por sexo y departamento:")
+    #print(muertes_por_sexo.head(10))
     return muertes_por_sexo
  
 ### Distribución de muertes, agrupando los valores de la variable GRUPO_EDAD1 según los rangos 

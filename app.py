@@ -2,22 +2,26 @@ import json
 import pandas as pd
 import plotly.express as px
 from dash import Dash, dcc, html, dash_table
-import process as datos
+#import process as datos
+import os
 
 # --- Datos del mapa ---
-df = datos.data_mapa()
-lineal1=datos.grafico_lineal()
+#df = datos.data_mapa()
+df =pd.read_csv("info/mapa.csv",sep='|')
+# --- Datos del gráfico de lineal ---
+lineal1=pd.read_csv("info/lineal.csv",sep='|')
 # --- Datos del gráfico de barras ---
-df_ciudades = datos.grafico_barras()
+df_ciudades = pd.read_csv("info/df_ciudades.csv",sep='|')
 # --- Datos del gráfico circular ---
-circular = datos.grafico_circular()
+circular = pd.read_csv("info/circular.csv",sep='|')
 # --- Datos del gráfico apilado ---
-apiladas = datos.grafico_apiladas()
+apiladas = pd.read_csv("info/apiladas.csv",sep='|')
 # --- Datos del histograma ---
-histogra = datos.histograma()
+histogra = pd.read_csv("info/histogra.csv",sep='|')
 # --- Datos de la tabla ---
-tablita = datos.tabla()
+tablita = pd.read_csv("info/tablita.csv",sep='|')
 # --- Cargar GeoJSON local ---
+
 with open("departamentos_colombia.geojson", "r", encoding="utf-8") as f:
     geojson = json.load(f)
 
